@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>予約システムの待ち時間の表示画面 — デザインスタディ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #e8e8e8;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 48px 32px;
+    }
+
+    /* ページヘッダー */
+    .page-header {
+      max-width: 1728px;
+      margin: 0 auto 24px;
+    }
+
+    .page-header a {
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      color: #666;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+    }
+
+    .page-header a:hover {
+      color: #333;
+    }
+
+    /* ─── カード ─── */
+    .study-card {
+      background: #fff;
+      border: 3.5px solid #8bf378;
+      border-radius: 9px;
+      width: 100%;
+      max-width: 1728px;
+      margin: 0 auto;
+    }
+
+    /* ヘッダー行 */
+    .card-header {
+      /*
+        Figma: title-box y=17, x=26
+        → padding-top=17px, padding-left=26px
+        自然な高さ = 17 + 99(box) = 116px
+      */
+      padding: 17px 0 0 26px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    /* タイトルを囲む緑枠ボックス */
+    .title-box {
+      border: 3px solid #8bf378;
+      border-radius: 10px;
+      background: #fff;
+      /*
+        Figma: box h=99px, title h=34px → 上下 padding=(99-34)/2≈32px
+        左 padding: title x=73, box x=26 → 73-26=47px
+        右 padding: box ends at 831, title ends at 521 → 310px ≒ 47px left を踏まえ余白
+      */
+      height: 99px;
+      padding: 0 47px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 28px;
+      font-weight: 400;
+      color: #000;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+      /*
+        Figma: box right edge = 26+805=831, tags x=883 → gap=52px
+        tags y=79, header padding-top=17 → margin-top=62px
+      */
+      margin-left: 52px;
+      margin-top: 62px;
+      flex-shrink: 0;
+    }
+
+    .tag {
+      background: #2eb017;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      padding: 0 16px;
+      height: 37px;
+      border-radius: 7px;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    /* ボディ行 */
+    .card-body {
+      display: grid;
+      /*
+        Figma 1728px 幅:
+        左余白 73px | 画像 356px | ギャップ 170px | テキスト 984px | 右余白 145px
+      */
+      grid-template-columns: 73px 356px 170px 984px 1fr;
+      /*
+        画像 top=250px、header自然高=116px → padding-top = 250-116 = 134px
+      */
+      padding-top: 134px;
+      padding-bottom: 60px;
+      align-items: start;
+    }
+
+    /* col1: 左余白（空） */
+    /* col2: スクリーンショット */
+    .screenshot-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* col3: ギャップ（空） */
+
+    /* col4: 説明テキスト */
+    .description {
+      padding-top: 21px; /* Figma: 画像 top=250, テキスト top=271 → 差=21px */
+    }
+
+    .description p {
+      font-size: 26px;
+      font-weight: 400;
+      color: #000;
+      line-height: 1.5;
+    }
+
+    .description p + p {
+      margin-top: 31px;
+    }
+
+    /* ─── レスポンシブ ─── */
+    @media (max-width: 1200px) {
+      .card-header {
+        padding: 16px 0 0 20px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .title-box {
+        height: auto;
+        padding: 14px 24px;
+      }
+
+      .tags {
+        margin-left: 20px;
+        margin-top: 0;
+        align-self: center;
+      }
+
+      .card-body {
+        grid-template-columns: 40px 1fr 32px 2fr 40px;
+        padding-top: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 24px 16px;
+      }
+
+      .card-header {
+        padding: 16px 16px 0;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .title-box {
+        height: auto;
+        padding: 12px 20px;
+        width: 100%;
+      }
+
+      .card-title {
+        font-size: 18px;
+        white-space: normal;
+        line-height: 1.4;
+      }
+
+      .tags {
+        margin-left: 0;
+        margin-top: 0;
+      }
+
+      .card-body {
+        grid-template-columns: 16px 1fr 16px;
+        grid-template-rows: auto auto;
+        padding-top: 28px;
+        column-gap: 0;
+        row-gap: 28px;
+      }
+
+      .screenshot-wrapper {
+        grid-column: 2 / 3;
+        grid-row: 1;
+      }
+
+      .description {
+        grid-column: 2 / 3;
+        grid-row: 2;
+        padding-top: 0;
+      }
+
+      .description p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href="index.html">← デザインスタディ一覧</a>
+  </header>
+
+  <article class="study-card">
+
+    <div class="card-header">
+      <div class="title-box">
+        <h1 class="card-title">予約システムの待ち時間の表示画面</h1>
+      </div>
+      <div class="tags">
+        <span class="tag">UI/UX</span>
+        <span class="tag">SP</span>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- col 1: 左余白 -->
+      <div></div>
+
+      <!-- col 2: スクリーンショット -->
+      <div class="screenshot-wrapper">
+        <img
+          src="images/01_screenshot.jpg"
+          alt="予約システムの待ち時間の表示画面スクリーンショット"
+        />
+      </div>
+
+      <!-- col 3: ギャップ -->
+      <div></div>
+
+      <!-- col 4: 説明テキスト -->
+      <div class="description">
+        <p>ローディングのアニメーションが背景と一体化しているようにデザインされている。</p>
+        <p>画像用のスペースを取らない分、違和感なく他の情報（残り人数や呼び出し状況のステータス）を画面中心に表示できるようにする工夫があると思われる。</p>
+      </div>
+
+      <!-- col 5: 右余白 -->
+      <div></div>
+    </div>
+
+  </article>
+
+</body>
+</html>
